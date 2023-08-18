@@ -1,5 +1,6 @@
 import { TextField, Button, Typography, Grid, Box, Card, CardContent } from '@mui/material';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 export function Home() {
   return (
@@ -31,14 +32,14 @@ export function FormComponent({ isSignedIn, contractId, wallet }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!id) {
+    if (!id || !name) {
       return; // Prevent submitting with empty ID
     }
 
     setIsSubmitting(true);
 
     try {
-      const args = { project_name: id };
+      const args = { project_id: id, project_name: name, description: description };
       await wallet.callMethod({ method: 'create_factory_subaccount_and_deploy', args, contractId, deposit: "5000000000000000000000000" });
       console.log('Method called successfully');
     } catch (error) {
@@ -103,8 +104,8 @@ export function FormComponent({ isSignedIn, contractId, wallet }) {
             fullWidth
             margin="normal"
           />
-          <Button type="submit" variant="contained" color="primary" disabled={isSubmitting || !id}>
-            Submit
+          <Button type="submit" variant="contained" color="primary" disabled={isSubmitting || !id || !name}>
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
         </form>
       </Grid>
@@ -112,7 +113,7 @@ export function FormComponent({ isSignedIn, contractId, wallet }) {
   );
 }
 
-export function ProjectList ({ wallet, contractId }) {
+export function ProjectList({ wallet, contractId }) {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
@@ -137,10 +138,24 @@ export function ProjectList ({ wallet, contractId }) {
       <Grid container spacing={2}> {/* Adjust spacing between cards */}
         {projects.map((project, index) => (
           <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-            <Card sx={{ minWidth: 275 }}>
-              <CardContent>
+            <Card sx={{ minWidth: 275 }} >
+              <CardContent component={Link} to={`/view-projects/${project[1].split('.')[0]}`} sx={{
+                textDecoration: 'none',
+                color: 'inherit',
+                '&:hover': {
+                  textDecoration: 'none',
+                },
+                padding: '10px',
+                display: 'flex', // Add display flex
+                flexDirection: 'column', // Stack content vertically
+                alignItems: 'center', // Center content horizontally
+              }}>
+                <Typography variant="h6" component="div">
+                  {project[0]} {/* Assuming project_name is at index 0 */}
+                </Typography>
+                <br />
                 <Typography variant="body2" color="text.secondary">
-                  Project ID: {project} {/* Assuming project_id is at index 1 */}
+                  Project ID: {project[1]} {/* Assuming project_id is at index 1 */}
                 </Typography>
               </CardContent>
             </Card>
@@ -150,5 +165,38 @@ export function ProjectList ({ wallet, contractId }) {
     </Box>
   );
 }
+
+export function ProjectDetails({ contractId, wallet }) {
+  const { project } = useParams();
+  const newContractId = `${project}.${contractId}`;
+  const [owner, setOwner] = useState('');
+
+  useEffect(() => {
+    async function fetchOwner() {
+      try {
+        const result = await wallet.viewMethod({
+          contractId: newContractId,
+          method: 'view_owner'
+        });
+        setOwner(result);
+      } catch (error) {
+        console.error('Error fetching owner:', error);
+      }
+    }
+
+    fetchOwner();
+  }, [newContractId, wallet]);
+
+  return (
+    <div>
+      <h2>Project Details</h2>
+      <p>Owner: {owner}</p>
+      {/* Rest of your component */}
+    </div>
+  );
+};
+
+export default ProjectDetails;
+
 
 
