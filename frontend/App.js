@@ -7,29 +7,25 @@ import '@fontsource/roboto/700.css';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 
-import { EducationalText, SignInPrompt, SignOutButton } from './ui-components';
+import { FormComponent, Home, ProjectList } from './ui-components';
+import { BrowserRouter } from 'react-router-dom';
 
 
 export default function App({ isSignedIn, contractId, wallet }) {
 
   const pages = [{
     name: 'View Projects',
-    path: '/projects'
+    path: '/view-projects'
   },
   {
-    name: 'Pricing',
-    path: '/pricing'
+    name: 'Create Projects',
+    path: '/create-project'
   },];
 
   const [valueFromBlockchain, setValueFromBlockchain] = React.useState();
@@ -47,14 +43,9 @@ export default function App({ isSignedIn, contractId, wallet }) {
   }
     , []);
 
-  /// If user not signed-in with wallet - show prompt
-  // if (!isSignedIn) {
-  //   // Sign-in flow will reload the page later
-  //   return <SignInPrompt greeting={valueFromBlockchain} onClick={() => wallet.signIn()}/>;
-  // }
-  // 
   return (
     <>
+    <BrowserRouter>
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -78,8 +69,8 @@ export default function App({ isSignedIn, contractId, wallet }) {
             <Typography
               variant="h5"
               noWrap
-              component="a"
-              href="/"
+              component={Link}
+              to="/"
               sx={{
                 mr: 2,
                 display: { xs: 'flex', md: 'none' },
@@ -96,8 +87,10 @@ export default function App({ isSignedIn, contractId, wallet }) {
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
                 <Button
+                  component={Link}
                   key={page.name}
                   sx={{ my: 2, color: 'white', display: 'block' }}
+                  to={page.path}
                 >
                   {page.name}
                 </Button>
@@ -123,7 +116,12 @@ export default function App({ isSignedIn, contractId, wallet }) {
           </Toolbar>
         </Container>
       </AppBar>
-      <SignInPrompt greeting={valueFromBlockchain} onClick={() => wallet.signIn()} />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/view-projects' element={<ProjectList contractId={contractId} wallet={wallet}/>} />
+        <Route path='/create-project' element={<FormComponent isSignedIn={isSignedIn} contractId={contractId} wallet={wallet} />}/>
+      </Routes>
+      </BrowserRouter>
     </>
   )
 

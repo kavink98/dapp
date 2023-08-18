@@ -9,7 +9,7 @@ import { setupModal } from '@near-wallet-selector/modal-ui';
 import { setupWalletSelector } from '@near-wallet-selector/core';
 import { setupMyNearWallet } from '@near-wallet-selector/my-near-wallet';
 
-const THIRTY_TGAS = '30000000000000';
+const NINETY_TGAS = '90000000000000';
 const NO_DEPOSIT = '0';
 
 // Wallet that simplifies using the wallet selector
@@ -75,7 +75,7 @@ export class Wallet {
   }
 
   // Call a method that changes the contract's state
-  async callMethod({ contractId, method, args = {}, gas = THIRTY_TGAS, deposit = NO_DEPOSIT }) {
+  async callMethod({ contractId, method, args = {}, gas = NINETY_TGAS, deposit = NO_DEPOSIT }) {
     // Sign a transaction with the "FunctionCall" action
     return await this.wallet.signAndSendTransaction({
       signerId: this.accountId,
