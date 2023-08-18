@@ -13,7 +13,7 @@ import Button from '@mui/material/Button';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 
-import { FormComponent, Home, ProjectList } from './ui-components';
+import ProjectDetails, { FormComponent, Home, ProjectList } from './ui-components';
 import { BrowserRouter } from 'react-router-dom';
 
 
@@ -120,6 +120,7 @@ export default function App({ isSignedIn, contractId, wallet }) {
         <Route path='/' element={<Home />} />
         <Route path='/view-projects' element={<ProjectList contractId={contractId} wallet={wallet}/>} />
         <Route path='/create-project' element={<FormComponent isSignedIn={isSignedIn} contractId={contractId} wallet={wallet} />}/>
+        <Route exact path='/view-projects/:project' element={<ProjectDetails contractId={contractId} wallet={wallet}/>}/>
       </Routes>
       </BrowserRouter>
     </>

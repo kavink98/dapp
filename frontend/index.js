@@ -6,7 +6,7 @@ import App from './App';
 // NEAR
 import { Wallet } from './near-wallet';
 
-const CONTRACT_ADDRESS = "a.kavin.testnet"
+const CONTRACT_ADDRESS = "name.kavin.testnet"
 
 // When creating the wallet you can optionally ask to create an access key
 // Having the key enables to call non-payable methods without interrupting the user to sign
