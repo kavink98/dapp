@@ -31,3 +31,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .parcel-cache
+contract
+integration-tests
+dist
